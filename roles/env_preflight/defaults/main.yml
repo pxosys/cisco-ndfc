@@ -1,0 +1,18 @@
+---
+env_preflight_min_python_version: "3.11.0"
+env_preflight_min_ansible_version: "2.16.0"
+
+env_preflight_required_python_modules:
+  - requests
+  - urllib3
+  - yaml
+  - jinja2
+  - packaging
+
+env_preflight_required_collections:
+  - name: cisco.dcnm
+    min_version: "3.6.0"
+  - name: ansible.netcommon
+    min_version: "6.1.0"
+  - name: ansible.utils
+    min_version: "3.1.0"

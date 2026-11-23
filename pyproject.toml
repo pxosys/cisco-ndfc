@@ -1,0 +1,9 @@
+[project]
+name = "cisco-ndfc"
+version = "1.0.0"
+description = "Version-agnostic Ansible automation for Cisco NDFC and Nexus Dashboard fabric lifecycle & policy migration"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

@@ -1,0 +1,54 @@
+---
+- name: Ensure local backup directory exists
+  ansible.builtin.file:
+    path: "{{ backup_base_dir }}"
+    state: directory
+    mode: "0750"
+
+- name: Export fabric settings and nvPairs
+  cisco.dcnm.dcnm_rest:
+    method: GET
+    path: "{{ ndfc_api_prefix }}/rest/control/fabrics/{{ source_fabric_name }}"
+  register: fabric_export_details
+
+- name: Save fabric settings to JSON
+  ansible.builtin.copy:
+    content: "{{ fabric_export_details.response.DATA | to_nice_json }}"
+    dest: "{{ backup_base_dir }}/fabric_settings.json"
+    mode: "0640"
+
+- name: Export all VRFs
+  cisco.dcnm.dcnm_rest:
+    method: GET
+    path: "{{ ndfc_api_prefix }}/rest/top-down/fabrics/{{ source_fabric_name }}/vrfs"
+  register: fabric_export_vrfs
+
+- name: Save VRFs to JSON
+  ansible.builtin.copy:
+    content: "{{ fabric_export_vrfs.response.DATA | to_nice_json }}"
+    dest: "{{ backup_base_dir }}/vrfs.json"
+    mode: "0640"
+
+- name: Export all networks
+  cisco.dcnm.dcnm_rest:
+    method: GET
+    path: "{{ ndfc_api_prefix }}/rest/top-down/fabrics/{{ source_fabric_name }}/networks"
+  register: fabric_export_networks
+
+- name: Save networks to JSON
+  ansible.builtin.copy:
+    content: "{{ fabric_export_networks.response.DATA | to_nice_json }}"
+    dest: "{{ backup_base_dir }}/networks.json"
+    mode: "0640"
+
+- name: Export all configuration policies
+  cisco.dcnm.dcnm_rest:
+    method: GET
+    path: "{{ ndfc_api_prefix }}/rest/control/policies/fabrics/{{ source_fabric_name }}"
+  register: fabric_export_policies
+
+- name: Save configuration policies to JSON
+  ansible.builtin.copy:
+    content: "{{ fabric_export_policies.response.DATA | to_nice_json }}"
+    dest: "{{ backup_base_dir }}/policies.json"
+    mode: "0640"

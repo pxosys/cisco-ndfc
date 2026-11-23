@@ -1,0 +1,7 @@
+---
+- name: Validate Linux Control Node Environment & Dependencies
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  roles:
+    - role: env_preflight

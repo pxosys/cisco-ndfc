@@ -1,0 +1,38 @@
+---
+- name: Verify control node is running on Linux
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['system'] == 'Linux'
+    fail_msg: "Control node must be Linux (detected: {{ ansible_facts['system'] | default('Unknown') }})."
+    success_msg: "Linux control node confirmed ({{ ansible_facts['distribution'] | default('Linux') }} {{ ansible_facts['distribution_version'] | default('') }})."
+
+- name: Verify Python version meets minimum requirement ({{ env_preflight_min_python_version }})
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['python_version'] is version(env_preflight_min_python_version, '>=')
+    fail_msg: "Python >= {{ env_preflight_min_python_version }} required on control node (found {{ ansible_facts['python_version'] }})."
+    success_msg: "Python {{ ansible_facts['python_version'] }} meets minimum requirement."
+
+- name: Verify Ansible Core version meets minimum requirement ({{ env_preflight_min_ansible_version }})
+  ansible.builtin.assert:
+    that:
+      - ansible_version.full is version(env_preflight_min_ansible_version, '>=')
+    fail_msg: "ansible-core >= {{ env_preflight_min_ansible_version }} required (found {{ ansible_version.full }})."
+    success_msg: "ansible-core {{ ansible_version.full }} meets minimum requirement."
+
+- name: Check required Python libraries in active virtual environment
+  ansible.builtin.command:
+    cmd: "{{ ansible_playbook_python }} -c 'import {{ item }}'"
+  loop: "{{ env_preflight_required_python_modules }}"
+  register: env_preflight_py_imports
+  changed_when: false
+  failed_when: env_preflight_py_imports.rc != 0
+
+- name: Verify required Ansible collections are installed with valid versions
+  ansible.builtin.command:
+    cmd: "ansible-galaxy collection list {{ item.name }}"
+  loop: "{{ env_preflight_required_collections }}"
+  register: env_preflight_col_check
+  changed_when: false
+  failed_when:
+    - env_preflight_col_check.rc != 0 or (item.name not in env_preflight_col_check.stdout)

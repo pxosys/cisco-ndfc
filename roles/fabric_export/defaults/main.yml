@@ -1,0 +1,12 @@
+---
+ndfc_platform_version: "nd4.3"
+source_fabric_name: "Fabric-Prod-01"
+backup_base_dir: "{{ playbook_dir }}/../backups/{{ ndfc_platform_version }}/{{ source_fabric_name }}"
+
+# Version-specific API path prefixes
+ndfc_api_prefix_map:
+  nd4.3: "/appcenter/cisco/ndfc/api/v1/lan-fabric"
+  ndfc12: "/appcenter/cisco/ndfc/api/v1/lan-fabric"
+  dcnm11: ""
+
+ndfc_api_prefix: "{{ ndfc_api_prefix_map[ndfc_platform_version] | default('/appcenter/cisco/ndfc/api/v1/lan-fabric') }}"

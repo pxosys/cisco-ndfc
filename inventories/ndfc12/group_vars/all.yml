@@ -1,0 +1,20 @@
+---
+# Platform Version Profile ("nd4.3", "ndfc12", or "dcnm11")
+ndfc_platform_version: "ndfc12"
+
+# Connection Settings
+ansible_connection: ansible.netcommon.httpapi
+ansible_network_os: cisco.dcnm.dcnm
+ansible_httpapi_use_ssl: true
+ansible_httpapi_validate_certs: false
+
+ansible_user: "{{ vault_ndfc_username }}"
+ansible_password: "{{ vault_ndfc_password }}"
+
+# Fabric Migration Settings
+source_fabric_name: "Legacy-Fabric-01"
+dest_fabric_name: "Modern-Fabric-01"
+dest_fabric_template: "Easy_Fabric"
+
+backup_base_dir: "{{ playbook_dir }}/../backups/{{ ndfc_platform_version }}/{{ source_fabric_name }}"
+switch_serial_map: {}

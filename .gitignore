@@ -1,0 +1,20 @@
+# Python virtual environments
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Local fabric backups (contains sensitive SNMP/BGP/AAA configs)
+backups/
+*.json
+
+# Ansible artifacts & vault secrets
+*.retry
+.vault_pass*
+.ansible/
+
+# Editors & OS
+.vscode/
+.idea/
+.DS_Store

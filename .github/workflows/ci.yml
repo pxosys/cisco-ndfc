@@ -1,0 +1,39 @@
+---
+name: CI - Lint & Syntax Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint YAML & Ansible
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Bootstrap & validate Linux environment
+        run: |
+          chmod +x scripts/validate_env.sh
+          make setup
+          ./scripts/validate_env.sh
+
+      - name: Run yamllint
+        run: .venv/bin/yamllint .
+
+      - name: Run ansible-lint
+        run: .venv/bin/ansible-lint
+
+      - name: Run playbook syntax check (ND 4.3 & NDFC 12)
+        run: |
+          .venv/bin/ansible-playbook -i inventories/nd43/hosts.ini playbooks/migrate_fabric.yml --syntax-check
+          .venv/bin/ansible-playbook -i inventories/ndfc12/hosts.ini playbooks/migrate_fabric.yml --syntax-check

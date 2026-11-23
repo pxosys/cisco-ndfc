@@ -1,0 +1,9 @@
+---
+- name: Phase 0 - Pre-Flight Linux Environment Validation
+  ansible.builtin.import_playbook: validate_environment.yml
+
+- name: Phase 1 - Import fabric settings and policies into destination controller
+  hosts: dest_nd
+  gather_facts: false
+  roles:
+    - role: fabric_import
